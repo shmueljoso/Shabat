@@ -1,6 +1,10 @@
 // ===== מנוע המשחק =====
 
-function createInitialState() {
+function createInitialState(difficultyId) {
+  const mode = DIFFICULTY_MODES[difficultyId] || DIFFICULTY_MODES.normal;
+  const gameEndMin = mode.gameEndMin;
+  const realDurationSec = (gameEndMin - GAME_START_MIN) * SEC_PER_GAME_MIN;
+
   const characters = CHARACTERS.map(c => ({
     ...c,
     status: 'sleeping', // sleeping | idle | working | showering
@@ -34,6 +38,9 @@ function createInitialState() {
     started: false,
     ended: false,
     result: null,
+    difficulty: mode.id,
+    gameEndMin,
+    realDurationSec,
     elapsedReal: 0,
     gameMin: GAME_START_MIN,
     characters,
@@ -340,8 +347,8 @@ function endGame(state) {
 
 function tickGame(state, deltaReal) {
   if (!state.started || state.ended) return;
-  state.elapsedReal = Math.min(state.elapsedReal + deltaReal, REAL_DURATION_SEC);
-  state.gameMin = Math.min(GAME_START_MIN + state.elapsedReal * GAME_MIN_PER_REAL_SEC, GAME_END_MIN);
+  state.elapsedReal = Math.min(state.elapsedReal + deltaReal, state.realDurationSec);
+  state.gameMin = Math.min(GAME_START_MIN + state.elapsedReal * GAME_MIN_PER_REAL_SEC, state.gameEndMin);
 
   state.characters.forEach(c => {
     if (c.status === 'sleeping' && c.wake <= state.gameMin) c.status = 'idle';
@@ -354,7 +361,7 @@ function tickGame(state, deltaReal) {
   updateJoker(state);
   updateShowers(state);
 
-  if (state.elapsedReal >= REAL_DURATION_SEC) endGame(state);
+  if (state.elapsedReal >= state.realDurationSec) endGame(state);
 }
 
 function formatGameTime(gameMin) {

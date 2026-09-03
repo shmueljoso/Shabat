@@ -1,10 +1,14 @@
 // ===== קבועי זמן =====
 const GAME_START_MIN = 360;               // 06:00 בדקות מחצות
-const GAME_END_MIN = 1080;                // 18:00 בדקות מחצות
-const GAME_DURATION_MIN = GAME_END_MIN - GAME_START_MIN; // 720 דקות משחק
-const REAL_DURATION_SEC = 360;            // 6 דקות אמת
-const GAME_MIN_PER_REAL_SEC = GAME_DURATION_MIN / REAL_DURATION_SEC; // 2
+const GAME_MIN_PER_REAL_SEC = 2;          // 1 שעת משחק = 30 שניות אמת (קבוע, לא תלוי ברמת קושי)
 const SEC_PER_GAME_MIN = 1 / GAME_MIN_PER_REAL_SEC; // 0.5 שניות אמת לדקת משחק
+
+// רמות קושי: "שבת מוקדמת" מקדימה את כניסת השבת בשעה וחצי, וכתוצאה מהיחס
+// הקבוע לעיל גם מקצרת את משך המשחק האמיתי - פחות זמן לאותן משימות בדיוק.
+const DIFFICULTY_MODES = {
+  normal: { id: 'normal', label: 'רגיל', gameEndMin: 1080 },      // 18:00
+  early: { id: 'early', label: 'שבת מוקדמת', gameEndMin: 990 },   // 16:30
+};
 
 function gameMinToRealSec(gameMin) {
   return gameMin * SEC_PER_GAME_MIN;

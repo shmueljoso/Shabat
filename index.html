@@ -24,7 +24,11 @@
   <div id="start-overlay" class="overlay">
     <div class="overlay-card">
       <img class="hero-logo" src="./icons/hero.jpg" alt="הכנות לשבת - משפחת יוסוביץ׳" width="1024" height="1024">
-      <p class="overlay-sub">בוקר יום שישי, השעה 06:00. יש לכם 6 דקות (עד כניסת השבת ב-18:00) לנהל את המשפחה, לחלק משימות ולהספיק הכל בזמן!</p>
+      <p id="overlay-sub" class="overlay-sub">בוקר יום שישי, השעה 06:00. יש לכם 06:00 דקות עד כניסת השבת (18:00) לנהל את המשפחה, לחלק משימות ולהספיק הכל בזמן!</p>
+      <div class="difficulty-picker" id="difficulty-picker">
+        <button class="diff-btn active" data-diff="normal">🕐 רגיל<br><span>עד 18:00</span></button>
+        <button class="diff-btn" data-diff="early">🔥 שבת מוקדמת<br><span>עד 16:30 - קשה יותר!</span></button>
+      </div>
       <ul class="overlay-rules">
         <li>🍞 אפו חלות וכוונו ⏰ פלטה ושעוני שבת - משימות ברזל שחובה לסיים!</li>
         <li>🚿 לפחות חצי מבני המשפחה חייבים להתקלח לפני כניסת השבת</li>
@@ -54,7 +58,7 @@
     </div>
     <div class="header-clocks">
       <div class="clock-block clock-game">
-        <span class="clock-label">🕯️ שעון שבת</span>
+        <span class="clock-label">🕯️ שעון שבת <span id="game-clock-badge" class="early-badge" hidden>🔥 מוקדם</span></span>
         <span id="game-clock" class="clock-value">06:00</span>
       </div>
       <div class="clock-block clock-real">

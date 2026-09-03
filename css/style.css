@@ -461,6 +461,35 @@ button { font-family: inherit; font-weight: 800; touch-action: manipulation; }
   box-shadow: var(--shadow-lg);
 }
 .overlay-sub { font-size: 13.5px; font-weight: 700; color: var(--muted); line-height: 1.55; margin: 0 0 16px; }
+
+/* בורר רמת קושי */
+.difficulty-picker { display: flex; gap: 10px; margin: 0 0 18px; }
+.diff-btn {
+  flex: 1;
+  background: var(--white); color: var(--ink);
+  border: var(--bw) solid var(--ink); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 6px; font-size: 13px; font-weight: 800; line-height: 1.5;
+  cursor: pointer; touch-action: manipulation;
+  transition: transform .06s ease, box-shadow .06s ease;
+}
+.diff-btn span { display: block; font-size: 10.5px; font-weight: 700; color: var(--muted); }
+.diff-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.diff-btn.active {
+  background: var(--mustard);
+  transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink);
+}
+.diff-btn.active span { color: var(--ink); }
+.diff-btn[data-diff="early"].active { background: var(--orange); color: var(--white); }
+.diff-btn[data-diff="early"].active span { color: var(--white); }
+
+.early-badge {
+  display: inline-block; font-size: 9px; font-weight: 800;
+  background: var(--red); color: var(--white);
+  border: 1.5px solid var(--ink); border-radius: 20px; padding: 0 6px;
+  margin-inline-start: 4px; vertical-align: middle;
+}
+
 .overlay-rules { list-style: none; text-align: right; padding: 0; margin: 0 0 18px; }
 .overlay-rules li {
   font-size: 12.5px; font-weight: 700; line-height: 1.45;

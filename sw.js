@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yosovich-shabbat-v3';
+const CACHE_NAME = 'yosovich-shabbat-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -32,38 +32,29 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Network-first עבור ניווט (HTML), Cache-first עבור שאר הנכסים - כדי לעבוד גם אופליין.
+// Network-first על כל בקשה - כדי שאפליקציה מותקנת תמיד תקבל את הגרסה החדשה כשיש
+// רשת, ותיפול בחזרה למטמון רק כשאין רשת. Cache-first (הגרסה הקודמת) גרם לכך
+// שאפליקציה שהותקנה כבר נשארה נעולה על CSS/JS ישנים גם אחרי עדכון בשרת.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
+  event.respondWith(
+    fetch(req)
+      .then((res) => {
+        if (res && res.status === 200 && (res.type === 'basic' || res.type === 'cors')) {
           const copy = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req)
-        .then((res) => {
-          // שומר במטמון נכסים מקומיים וגם את הגופנים מ-Google Fonts (type: cors),
-          // כדי שהעיצוב יישאר זהה גם במצב אופליין.
-          if (res && res.status === 200 && (res.type === 'basic' || res.type === 'cors')) {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-    })
+        }
+        return res;
+      })
+      .catch(() =>
+        caches.match(req).then((cached) => cached || (req.mode === 'navigate' ? caches.match('./index.html') : undefined))
+      )
   );
+});
+
+// מאפשר לדף לבקש מה-Service Worker לקחת שליטה באופן מיידי (ראה pwa.js).
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });

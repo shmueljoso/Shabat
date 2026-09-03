@@ -25,7 +25,7 @@ function loop(now) {
 }
 
 function startNewGame() {
-  state = createInitialState();
+  state = createInitialState(selectedDifficulty);
   state.started = true;
   currentTab = 'ground';
   switchTab('ground');
@@ -38,6 +38,7 @@ function startNewGame() {
 function initApp() {
   state = createInitialState();
   initNav();
+  initDifficultyPicker();
   wireInstallButtons();
   registerServiceWorker();
 

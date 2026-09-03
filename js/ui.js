@@ -6,6 +6,7 @@ let sheetKind = null;   // 'task' | 'mess' | 'babysit'
 let sheetTargetId = null;
 let sheetSelected = [];
 let toastTimer = null;
+let selectedDifficulty = 'normal';
 
 const el = id => document.getElementById(id);
 
@@ -62,10 +63,30 @@ function render() {
 // ===== Header =====
 function renderHeader() {
   el('game-clock').textContent = formatGameTime(state.gameMin);
-  el('real-clock').textContent = formatRealTime(REAL_DURATION_SEC - state.elapsedReal);
+  el('real-clock').textContent = formatRealTime(state.realDurationSec - state.elapsedReal);
+  el('game-clock-badge').hidden = state.difficulty !== 'early';
   const { percent } = computeProgress(state);
   el('progress-fill').style.width = percent + '%';
   el('progress-label').textContent = percent + '%';
+}
+
+// ===== בורר רמת קושי (מסך פתיחה) =====
+function initDifficultyPicker() {
+  el('difficulty-picker').querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedDifficulty = btn.dataset.diff;
+      el('difficulty-picker').querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b === btn));
+      updateOverlaySub();
+    });
+  });
+  updateOverlaySub();
+}
+
+function updateOverlaySub() {
+  const mode = DIFFICULTY_MODES[selectedDifficulty] || DIFFICULTY_MODES.normal;
+  const realSec = (mode.gameEndMin - GAME_START_MIN) * SEC_PER_GAME_MIN;
+  el('overlay-sub').textContent =
+    `בוקר יום שישי, השעה 06:00. יש לכם ${formatRealTime(realSec)} דקות עד כניסת השבת (${formatGameTime(mode.gameEndMin)}) לנהל את המשפחה, לחלק משימות ולהספיק הכל בזמן!`;
 }
 
 // ===== כרטיסי משימות =====

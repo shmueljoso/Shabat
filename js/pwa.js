@@ -43,9 +43,21 @@ window.addEventListener('appinstalled', () => {
 });
 
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
-    });
-  }
+  if (!('serviceWorker' in navigator)) return;
+
+  // רענון חד-פעמי כשגרסת Service Worker חדשה משתלטת - כדי שאפליקציה שכבר
+  // מותקנת תקבל CSS/JS מעודכנים בלי צורך לסגור ולפתוח אותה מחדש.
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded) return;
+    reloaded = true;
+    window.location.reload();
+  });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      reg.update().catch(() => {});
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+    }).catch(() => {});
+  });
 }
