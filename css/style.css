@@ -439,7 +439,10 @@ button { font-family: inherit; font-weight: 800; touch-action: manipulation; }
   background-color: var(--cream);
   background-image: radial-gradient(rgba(30,30,36,0.12) 1.4px, transparent 1.4px);
   background-size: 18px 18px;
-  display: flex; align-items: center; justify-content: center;
+  /* flex-start (לא center) - כדי שבמסכים נמוכים, כשהתוכן גבוה מהמסך, יהיה
+     ניתן לגלול ולראות את הכל במקום שהחלק העליון (הלוגו) והתחתון (הכפתור)
+     ייחתכו בו-זמנית סביב מרכז לא-נגיש. */
+  display: flex; align-items: flex-start; justify-content: center;
   padding: 20px calc(16px + env(safe-area-inset-right)) calc(20px + var(--safe-bottom)) calc(16px + env(safe-area-inset-left));
   overflow-y: auto;
 }
@@ -454,11 +457,11 @@ button { font-family: inherit; font-weight: 800; touch-action: manipulation; }
 }
 .overlay-card h1 { font-size: 25px; font-weight: 900; margin: 0 0 12px; line-height: 1.3; }
 .hero-logo {
-  display: block; width: 100%; max-width: 260px; height: auto;
-  margin: 0 auto 14px;
+  display: block; width: 100%; max-width: 170px; height: auto;
+  margin: 0 auto 12px;
   border: var(--bw) solid var(--ink);
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
 }
 .overlay-sub { font-size: 13.5px; font-weight: 700; color: var(--muted); line-height: 1.55; margin: 0 0 16px; }
 
