@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>הכנות לשבת - משפחת יוסוביץ׳</title>
+<meta name="description" content="משחק סימולציה וניהול הכנות לשבת - משפחת יוסוביץ׳. נהלו את המשפחה, חלקו משימות, והספיקו הכל עד כניסת השבת!">
+<meta name="theme-color" content="#2a2d42">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="שבת יוסוביץ׳">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <div id="start-overlay" class="overlay">
+    <div class="overlay-card">
+      <h1>🕯️ הכנות לשבת<br><span class="family-name">משפחת יוסוביץ׳</span></h1>
+      <p class="overlay-sub">בוקר יום שישי, השעה 06:00. יש לכם 6 דקות (עד כניסת השבת ב-18:00) לנהל את המשפחה, לחלק משימות ולהספיק הכל בזמן!</p>
+      <ul class="overlay-rules">
+        <li>🍞 אפו חלות וכוונו ⏰ פלטה ושעוני שבת - משימות ברזל שחובה לסיים!</li>
+        <li>🚿 לפחות חצי מבני המשפחה חייבים להתקלח לפני כניסת השבת</li>
+        <li>👶 כשמגיעים אורחים - הציבו שמרטף בסלון, אחרת יהיה בלגן</li>
+        <li>👍 כל דמות מביאה בונוס מהירות למשימה שהיא הכי טובה בה</li>
+      </ul>
+      <button id="btn-start" class="btn-primary">התחילו את יום שישי 🚀</button>
+      <button id="btn-install" class="btn-secondary" hidden>📲 התקינו את האפליקציה</button>
+      <p id="ios-install-hint" class="ios-hint" hidden>באייפון: הקישו על שיתוף 📤 ואז "הוסף למסך הבית"</p>
+    </div>
+  </div>
+
+  <div id="end-overlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <h1 id="end-title"></h1>
+      <p id="end-message"></p>
+      <div id="end-stats" class="end-stats"></div>
+      <button id="btn-restart" class="btn-primary">שחקו שוב 🔁</button>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="header-top">
+      <span class="app-title">🕯️ הכנות לשבת - יוסוביץ׳</span>
+      <button id="btn-install-header" class="btn-install-header" hidden>📲 התקן</button>
+    </div>
+    <div class="header-clocks">
+      <div class="clock-block">
+        <span class="clock-label">שעון משחק</span>
+        <span id="game-clock" class="clock-value">06:00</span>
+      </div>
+      <div class="clock-block">
+        <span class="clock-label">זמן אמת נותר</span>
+        <span id="real-clock" class="clock-value">06:00</span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <span id="progress-label" class="progress-label">0%</span>
+    </div>
+  </header>
+
+  <main id="content">
+    <section id="tab-ground" class="tab-panel">
+      <h2 class="room-title">🍳 מטבח</h2>
+      <div id="kitchen-tasks" class="task-grid"></div>
+      <button id="btn-joker" class="joker-btn" hidden></button>
+      <h2 class="room-title">🛋️ סלון</h2>
+      <div id="babysitting-card" class="babysit-card" hidden></div>
+      <div id="salon-tasks" class="task-grid"></div>
+    </section>
+
+    <section id="tab-upper" class="tab-panel" hidden>
+      <h2 class="room-title">🛌 קומה עליונה ומעברים</h2>
+      <div id="upper-tasks" class="task-grid"></div>
+      <h2 class="room-title">🚿 מקלחות והתארגנות</h2>
+      <div id="shower-list" class="shower-grid"></div>
+    </section>
+
+    <section id="tab-outside" class="tab-panel" hidden>
+      <h2 class="room-title">🚗 בחוץ</h2>
+      <div id="outside-tasks" class="task-grid"></div>
+    </section>
+
+    <section id="tab-family" class="tab-panel" hidden>
+      <h2 class="room-title">👨‍👩‍👧‍👦 סטטוס משפחת יוסוביץ׳</h2>
+      <div id="family-list" class="family-grid"></div>
+      <h2 class="room-title">📜 יומן אירועים</h2>
+      <div id="event-log" class="event-log"></div>
+    </section>
+  </main>
+
+  <nav id="bottom-nav"></nav>
+
+  <div id="sheet-backdrop" class="sheet-backdrop" hidden></div>
+  <div id="assign-sheet" class="assign-sheet" hidden>
+    <div class="sheet-handle"></div>
+    <h3 id="sheet-title"></h3>
+    <p id="sheet-sub" class="sheet-sub"></p>
+    <div id="sheet-char-list" class="sheet-char-list"></div>
+    <button id="sheet-confirm" class="btn-primary" hidden>הצב/י במשימה</button>
+    <button id="sheet-cancel" class="btn-secondary">ביטול</button>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script src="./js/data.js"></script>
+<script src="./js/engine.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/pwa.js"></script>
+<script src="./js/main.js"></script>
+</body>
+</html>
