@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yosovich-shabbat-v2';
+const CACHE_NAME = 'yosovich-shabbat-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,8 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
+  './icons/logo.png',
+  './icons/hero.jpg',
 ];
 
 self.addEventListener('install', (event) => {
