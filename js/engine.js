@@ -67,6 +67,23 @@ function computeCharSpeedMultiplier(character, taskLike, state) {
   return 1 + bonus;
 }
 
+// כמה חדרי אורחים חייבים להיות מוכנים - חדר לכל אח/אחות נשואים שהגיעו
+function requiredGuestRooms(state) {
+  return Math.min(2, state.guestQueue.filter(g => g.arrived).length);
+}
+
+function readyGuestRooms(state) {
+  return (state.tasks['guest_room_1'].remaining === 0 ? 1 : 0) +
+         (state.tasks['guest_room_2'].remaining === 0 ? 1 : 0);
+}
+
+// משימת ברזל קבועה, או חדר אורחים שהפך לחובה אחרי הגעת האחים
+function isTaskCritical(def, state) {
+  if (def.critical) return true;
+  if (def.guestRoomIndex) return requiredGuestRooms(state) >= def.guestRoomIndex;
+  return false;
+}
+
 function isTaskUnlocked(def, state) {
   if (def.requires) {
     for (const rid of def.requires) {
@@ -257,6 +274,7 @@ function updateGuestArrivals(state) {
       state.characters.push(newChar);
       state.kidsPresentCount += g.family.kids.length;
       state.log.unshift(`👋 ${g.family.name} הגיע/ה עם ${g.family.kids.join(' ו')}!`);
+      state.log.unshift(`🛏️ חובה להכין חדר אורחים ${requiredGuestRooms(state)} - אחרת אין שבת!`);
     }
   });
 }
@@ -282,7 +300,10 @@ function evaluateEnd(state) {
   const fridayDone = state.tasks['friday_round'].remaining === 0;
   const { percent, totalChars, showeredCount } = computeProgress(state);
   const showerOk = showeredCount >= totalChars / 2;
-  const criticalFail = !challahDone || !hotplateDone || !showerOk;
+  const roomsNeeded = requiredGuestRooms(state);
+  const roomsReady = readyGuestRooms(state);
+  const guestRoomsOk = roomsReady >= roomsNeeded;
+  const criticalFail = !challahDone || !hotplateDone || !showerOk || !guestRoomsOk;
 
   let tier, title, message;
   if (criticalFail) {
@@ -292,6 +313,7 @@ function evaluateEnd(state) {
     if (!challahDone) reasons.push('החלות לא היו מוכנות בזמן');
     if (!hotplateDone) reasons.push('הפלטה ושעוני השבת לא כוונו');
     if (!showerOk) reasons.push('פחות ממחצית מבני הבית הספיקו להתקלח');
+    if (!guestRoomsOk) reasons.push(`האחים הנשואים הגיעו ואין להם איפה לישון (${roomsReady}/${roomsNeeded} חדרי אורחים מוכנים)`);
     message = 'לצערנו לא הושלמו משימות הברזל: ' + reasons.join(', ') + '.';
   } else if (percent >= 95 && fridayDone) {
     tier = 'perfect';
@@ -306,7 +328,8 @@ function evaluateEnd(state) {
     title = 'שבת נכנסה בדוחק... 😅';
     message = `הצלחתם להשלים רק ${percent}% מהמשימות, אך משימות הברזל בוצעו. שבת שלום, בקושי!`;
   }
-  return { tier, title, message, percent, showeredCount, totalChars, challahDone, hotplateDone, fridayDone };
+  return { tier, title, message, percent, showeredCount, totalChars, challahDone, hotplateDone, fridayDone,
+           roomsNeeded, roomsReady, guestRoomsOk };
 }
 
 function endGame(state) {

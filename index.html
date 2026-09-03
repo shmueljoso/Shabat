@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
 <title>הכנות לשבת - משפחת יוסוביץ׳</title>
 <meta name="description" content="משחק סימולציה וניהול הכנות לשבת - משפחת יוסוביץ׳. נהלו את המשפחה, חלקו משימות, והספיקו הכל עד כניסת השבת!">
-<meta name="theme-color" content="#2a2d42">
+<meta name="theme-color" content="#FAF8F5">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -13,6 +13,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="שבת יוסוביץ׳">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@600;700;800&family=Heebo:wght@700;800;900&display=swap">
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -25,6 +28,7 @@
       <ul class="overlay-rules">
         <li>🍞 אפו חלות וכוונו ⏰ פלטה ושעוני שבת - משימות ברזל שחובה לסיים!</li>
         <li>🚿 לפחות חצי מבני המשפחה חייבים להתקלח לפני כניסת השבת</li>
+        <li>🛏️ כשאח או אחות נשואים מגיעים - חובה להכין להם חדר אורחים, אחרת אין שבת!</li>
         <li>👶 כשמגיעים אורחים - הציבו שמרטף בסלון, אחרת יהיה בלגן</li>
         <li>👍 כל דמות מביאה בונוס מהירות למשימה שהיא הכי טובה בה</li>
       </ul>
@@ -49,12 +53,12 @@
       <button id="btn-install-header" class="btn-install-header" hidden>📲 התקן</button>
     </div>
     <div class="header-clocks">
-      <div class="clock-block">
-        <span class="clock-label">שעון משחק</span>
+      <div class="clock-block clock-game">
+        <span class="clock-label">🕯️ שעון שבת</span>
         <span id="game-clock" class="clock-value">06:00</span>
       </div>
-      <div class="clock-block">
-        <span class="clock-label">זמן אמת נותר</span>
+      <div class="clock-block clock-real">
+        <span class="clock-label">⏱️ זמן אמת</span>
         <span id="real-clock" class="clock-value">06:00</span>
       </div>
     </div>
@@ -66,30 +70,30 @@
 
   <main id="content">
     <section id="tab-ground" class="tab-panel">
-      <h2 class="room-title">🍳 מטבח</h2>
+      <h2 class="room-title rt-kitchen">🍳 מטבח</h2>
       <div id="kitchen-tasks" class="task-grid"></div>
       <button id="btn-joker" class="joker-btn" hidden></button>
-      <h2 class="room-title">🛋️ סלון</h2>
+      <h2 class="room-title rt-salon">🛋️ סלון</h2>
       <div id="babysitting-card" class="babysit-card" hidden></div>
       <div id="salon-tasks" class="task-grid"></div>
     </section>
 
     <section id="tab-upper" class="tab-panel" hidden>
-      <h2 class="room-title">🛌 קומה עליונה ומעברים</h2>
+      <h2 class="room-title rt-upper">🛌 קומה עליונה ומעברים</h2>
       <div id="upper-tasks" class="task-grid"></div>
-      <h2 class="room-title">🚿 מקלחות והתארגנות</h2>
+      <h2 class="room-title rt-shower">🚿 מקלחות והתארגנות</h2>
       <div id="shower-list" class="shower-grid"></div>
     </section>
 
     <section id="tab-outside" class="tab-panel" hidden>
-      <h2 class="room-title">🚗 בחוץ</h2>
+      <h2 class="room-title rt-outside">🚗 בחוץ</h2>
       <div id="outside-tasks" class="task-grid"></div>
     </section>
 
     <section id="tab-family" class="tab-panel" hidden>
-      <h2 class="room-title">👨‍👩‍👧‍👦 סטטוס משפחת יוסוביץ׳</h2>
+      <h2 class="room-title rt-family">👨‍👩‍👧‍👦 סטטוס משפחת יוסוביץ׳</h2>
       <div id="family-list" class="family-grid"></div>
-      <h2 class="room-title">📜 יומן אירועים</h2>
+      <h2 class="room-title rt-log">📜 יומן אירועים</h2>
       <div id="event-log" class="event-log"></div>
     </section>
   </main>

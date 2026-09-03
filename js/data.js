@@ -100,10 +100,11 @@ const TASKS = [
     gameMin: 40, categories: ['general'], count: 1, slots: 1, license: false },
   { id: 'laundry', name: 'מיון והפעלת כביסה', icon: '🧺', room: 'upper',
     gameMin: 60, categories: ['general'], count: 1, slots: 1, license: false },
+  // חדרי אורחים: הופכים למשימת ברזל ברגע שאח/אחות נשואים מגיעים!
   { id: 'guest_room_1', name: 'הכנת חדר אורחים 1', icon: '🛏️', room: 'upper',
-    gameMin: 50, categories: ['general'], count: 1, slots: 1, license: false },
+    gameMin: 50, categories: ['general'], count: 1, slots: 1, license: false, guestRoomIndex: 1 },
   { id: 'guest_room_2', name: 'הכנת חדר אורחים 2', icon: '🛏️', room: 'upper',
-    gameMin: 50, categories: ['general'], count: 1, slots: 1, license: false },
+    gameMin: 50, categories: ['general'], count: 1, slots: 1, license: false, guestRoomIndex: 2 },
 ];
 
 const COOKING_TASK_IDS = ['cook_chicken', 'cook_meat', 'cook_schnitzel', 'cook_kugel', 'cook_cake', 'bake_challah'];

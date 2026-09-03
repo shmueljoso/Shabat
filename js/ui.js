@@ -79,7 +79,7 @@ function taskStatus(def, t) {
 function taskCardHTML(def, t) {
   const status = taskStatus(def, t);
   const countBadge = def.count > 1 ? `<span class="count-badge">${t.doneCount}/${def.count}</span>` : '';
-  const critBadge = def.critical ? `<span class="crit-badge">ברזל 🔥</span>` : '';
+  const critBadge = isTaskCritical(def, state) ? `<span class="crit-badge">🔥 ברזל</span>` : '';
   let body = '';
   if (status === 'active') {
     const a = t.active;
@@ -96,13 +96,14 @@ function taskCardHTML(def, t) {
     const licTxt = def.license === true ? ' (רישיון חובה)' : def.license === 'any' ? ' (לפחות רישיון אחד)' : '';
     body = `<div class="task-meta available-meta">👆 ${slotTxt}${licTxt}</div>`;
   }
+  const badges = (countBadge || critBadge) ? `<div class="task-badges">${critBadge}${countBadge}</div>` : '';
   return `
-    <div class="task-card status-${status}" data-task="${def.id}" data-kind="task">
+    <div class="task-card room-${def.room} status-${status}" data-task="${def.id}" data-kind="task">
       <div class="task-card-top">
         <span class="task-icon">${def.icon}</span>
         <span class="task-name">${def.name}</span>
-        ${countBadge}${critBadge}
       </div>
+      ${badges}
       ${body}
     </div>`;
 }
@@ -121,7 +122,7 @@ function messCardHTML(m) {
     body = `<div class="task-meta available-meta">👆 הקש/י להצבה</div>`;
   }
   return `
-    <div class="task-card mess-card status-${status}" data-task="${m.id}" data-kind="mess">
+    <div class="task-card mess-card room-salon status-${status}" data-task="${m.id}" data-kind="mess">
       <div class="task-card-top">
         <span class="task-icon">${m.icon}</span>
         <span class="task-name">${m.name}</span>
@@ -456,6 +457,7 @@ function showEndScreen(result) {
     <div class="stat-row"><span>מתקלחים</span><b>${result.showeredCount}/${result.totalChars}</b></div>
     <div class="stat-row"><span>חלות</span><b>${result.challahDone ? '✅' : '❌'}</b></div>
     <div class="stat-row"><span>פלטה ושעונים</span><b>${result.hotplateDone ? '✅' : '❌'}</b></div>
+    ${result.roomsNeeded > 0 ? `<div class="stat-row"><span>חדרי אורחים</span><b>${result.roomsReady}/${result.roomsNeeded} ${result.guestRoomsOk ? '✅' : '❌'}</b></div>` : ''}
     <div class="stat-row"><span>סיבוב יום שישי</span><b>${result.fridayDone ? '✅' : '❌'}</b></div>
   `;
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yosovich-shabbat-v1';
+const CACHE_NAME = 'yosovich-shabbat-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -53,7 +53,9 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
       return fetch(req)
         .then((res) => {
-          if (res && res.status === 200 && res.type === 'basic') {
+          // שומר במטמון נכסים מקומיים וגם את הגופנים מ-Google Fonts (type: cors),
+          // כדי שהעיצוב יישאר זהה גם במצב אופליין.
+          if (res && res.status === 200 && (res.type === 'basic' || res.type === 'cors')) {
             const copy = res.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           }
