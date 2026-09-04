@@ -1,18 +1,13 @@
-# קובץ זה עוזר לפיתוח מקומי (`wrangler pages dev .`) ולתיעוד ה-KV binding
-# הנדרש לטבלת השיאים ב-functions/api/leaderboard.js.
+# קונפיגורציה ל-Cloudflare Pages (דרך wrangler deploy המאוחד).
 #
-# בפריסה רגילה דרך חיבור Git ב-Cloudflare Pages (ללא CLI), אפשר גם לוותר על
-# הקובץ הזה ולהגדיר את ה-binding ישירות ב-Dashboard:
+# ה-KV binding לטבלת השיאים (functions/api/leaderboard.js) לא מוגדר כאן בכוונה -
+# עדיף להגדיר אותו ב-Dashboard כדי שלא יהיה מזהה שגוי בקוד שמפיל את ה-build:
 #   Pages project -> Settings -> Functions -> KV namespace bindings
 #   Variable name: LEADERBOARD_KV
 #
-# אם כן רוצים להשתמש ב-wrangler, יש ליצור namespace ולעדכן כאן את ה-id:
-#   npx wrangler kv namespace create LEADERBOARD_KV
-# ואז להעתיק את ה-id שמתקבל במקום הערך למטה.
+# לפיתוח מקומי בלבד (לא נדרש לפריסה), אפשר להריץ עם binding זמני בלי לגעת בקובץ:
+#   npx wrangler kv namespace create LEADERBOARD_KV   # פעם אחת, שומר את המזהה בפלט
+#   npx wrangler pages dev . --kv LEADERBOARD_KV
 
 name = "yosovich-shabbat-rush"
 pages_build_output_dir = "."
-
-[[kv_namespaces]]
-binding = "LEADERBOARD_KV"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
