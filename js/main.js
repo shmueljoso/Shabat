@@ -12,6 +12,10 @@ function loop(now) {
 
   if (state.started && !state.ended) {
     tickGame(state, deltaReal);
+    if (state.soundEvents.length) {
+      state.soundEvents.forEach(e => playSound(e.type));
+      state.soundEvents.length = 0;
+    }
     renderAccumulator += deltaReal;
     if (renderAccumulator >= RENDER_INTERVAL || state.ended) {
       renderAccumulator = 0;
@@ -25,6 +29,7 @@ function loop(now) {
 }
 
 function startNewGame() {
+  playSound('tap');
   state = createInitialState(selectedDifficulty);
   state.started = true;
   currentTab = 'ground';
@@ -39,6 +44,7 @@ function initApp() {
   state = createInitialState();
   initNav();
   initDifficultyPicker();
+  initMuteButton();
   wireInstallButtons();
   registerServiceWorker();
 

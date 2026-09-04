@@ -54,7 +54,10 @@
   <header id="header">
     <div class="header-top">
       <img class="header-logo" src="./icons/logo.png" alt="משפחת יוסוביץ׳" width="838" height="612">
-      <button id="btn-install-header" class="btn-install-header" hidden>📲 התקן</button>
+      <div class="header-actions">
+        <button class="btn-mute" aria-label="השתק צלילים">🔊</button>
+        <button id="btn-install-header" class="btn-install-header" hidden>📲 התקן</button>
+      </div>
     </div>
     <div class="header-clocks">
       <div class="clock-block clock-game">
@@ -119,6 +122,7 @@
 
 <script src="./js/data.js"></script>
 <script src="./js/engine.js"></script>
+<script src="./js/audio.js"></script>
 <script src="./js/ui.js"></script>
 <script src="./js/pwa.js"></script>
 <script src="./js/main.js"></script>

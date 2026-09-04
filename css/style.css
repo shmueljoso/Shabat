@@ -69,7 +69,7 @@ button { font-family: inherit; font-weight: 800; touch-action: manipulation; }
   margin-bottom: 10px;
 }
 .header-logo { height: 44px; width: auto; display: block; }
-.btn-install-header { margin-inline-start: auto; }
+.header-actions { display: flex; align-items: center; gap: 8px; margin-inline-start: auto; }
 .btn-install-header {
   background: var(--mint); color: var(--white);
   border: var(--bw) solid var(--ink); border-radius: 10px;
@@ -77,6 +77,14 @@ button { font-family: inherit; font-weight: 800; touch-action: manipulation; }
   padding: 6px 10px; font-size: 12px; min-height: 32px;
 }
 .btn-install-header:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.btn-mute {
+  background: var(--white); color: var(--ink);
+  border: var(--bw) solid var(--ink); border-radius: 10px;
+  box-shadow: var(--shadow);
+  min-width: 36px; min-height: 32px; font-size: 15px; line-height: 1;
+  padding: 6px 8px; cursor: pointer;
+}
+.btn-mute:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
 
 /* שעוני עצר משחקיים */
 .header-clocks { display: flex; gap: 10px; margin-bottom: 10px; }

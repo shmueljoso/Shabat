@@ -27,7 +27,7 @@ function initNav() {
     btn.className = 'nav-btn';
     btn.dataset.tab = tab.id;
     btn.innerHTML = `<span class="nav-icon">${tab.icon}</span><span class="nav-label">${tab.label}</span>`;
-    btn.addEventListener('click', () => switchTab(tab.id));
+    btn.addEventListener('click', () => { playSound('tap'); switchTab(tab.id); });
     nav.appendChild(btn);
   });
   updateNavActive();
@@ -74,6 +74,7 @@ function renderHeader() {
 function initDifficultyPicker() {
   el('difficulty-picker').querySelectorAll('.diff-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      playSound('tap');
       selectedDifficulty = btn.dataset.diff;
       el('difficulty-picker').querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b === btn));
       updateOverlaySub();
@@ -87,6 +88,25 @@ function updateOverlaySub() {
   const realSec = (mode.gameEndMin - GAME_START_MIN) * SEC_PER_GAME_MIN;
   el('overlay-sub').textContent =
     `בוקר יום שישי, השעה 06:00. יש לכם ${formatRealTime(realSec)} דקות עד כניסת השבת (${formatGameTime(mode.gameEndMin)}) לנהל את המשפחה, לחלק משימות ולהספיק הכל בזמן!`;
+}
+
+// ===== כפתור השתקה =====
+function initMuteButton() {
+  document.querySelectorAll('.btn-mute').forEach(btn => {
+    updateMuteButtons();
+    btn.addEventListener('click', () => {
+      const nowMuted = toggleMuted();
+      updateMuteButtons();
+      if (!nowMuted) playSound('tap');
+    });
+  });
+}
+
+function updateMuteButtons() {
+  document.querySelectorAll('.btn-mute').forEach(btn => {
+    btn.textContent = isMuted() ? '🔇' : '🔊';
+    btn.setAttribute('aria-label', isMuted() ? 'הפעל צלילים' : 'השתק צלילים');
+  });
 }
 
 // ===== כרטיסי משימות =====
@@ -162,13 +182,15 @@ function attachTaskCardHandlers(container) {
         const t = state.tasks[id];
         const status = taskStatus(def, t);
         if (status !== 'available') {
-          if (status === 'locked') showToast('המשימה נעולה - יש להשלים תנאים מקדימים');
+          if (status === 'locked') { playSound('denied'); showToast('המשימה נעולה - יש להשלים תנאים מקדימים'); }
           return;
         }
+        playSound('tap');
         openTaskSheet(id);
       } else if (kind === 'mess') {
         const m = state.messTasks.find(x => x.id === id);
         if (!m || m.active || m.remaining <= 0) return;
+        playSound('tap');
         openMessSheet(id);
       }
     });
@@ -219,8 +241,8 @@ function renderJoker() {
   }
   btn.onclick = () => {
     const res = useJokerCleaner(state);
-    if (!res.ok) showToast(res.error || 'לא ניתן כרגע');
-    else showToast('הג\'וקר יוצא לפעולה!');
+    if (!res.ok) { playSound('denied'); showToast(res.error || 'לא ניתן כרגע'); }
+    else { playSound('tap'); showToast('הג\'וקר יוצא לפעולה!'); }
   };
 }
 
@@ -239,7 +261,7 @@ function renderBabysitCard() {
       </div>
       <div class="task-meta">👶 ${state.kidsPresentCount} ילדים בסלון · מד בלגן: ${meterPct}%</div>
       <button class="btn-secondary small" id="btn-release-sitter">שחרר/י משמרטפות</button>`;
-    el('btn-release-sitter').onclick = () => { releaseBabysitter(state); render(); };
+    el('btn-release-sitter').onclick = () => { playSound('tap'); releaseBabysitter(state); render(); };
   } else {
     card.className = 'babysit-card unmanned';
     card.innerHTML = `
@@ -248,7 +270,7 @@ function renderBabysitCard() {
         <span class="task-name">מתחם שמרטפות - אין שמרטף!</span>
       </div>
       <div class="task-meta locked-meta">👶 ${state.kidsPresentCount} ילדים בסלון · מד בלגן: ${meterPct}% · 👆 הקש/י להצבה</div>`;
-    card.onclick = () => openBabysitSheet();
+    card.onclick = () => { playSound('tap'); openBabysitSheet(); };
   }
 }
 
@@ -280,7 +302,8 @@ function renderUpper() {
   list.querySelectorAll('.shower-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const res = startShower(state, btn.dataset.char);
-      if (!res.ok) showToast(res.error || 'לא ניתן כרגע');
+      if (!res.ok) { playSound('denied'); showToast(res.error || 'לא ניתן כרגע'); }
+      else playSound('tap');
       render();
     });
   });
@@ -409,7 +432,8 @@ function renderSheet() {
 
     attachCharRowHandlers(row => {
       const cid = row.dataset.char;
-      if (row.classList.contains('disabled')) { showToast('נדרש בעל/ת רישיון נהיגה למשימה זו'); return; }
+      if (row.classList.contains('disabled')) { playSound('denied'); showToast('נדרש בעל/ת רישיון נהיגה למשימה זו'); return; }
+      playSound('tap');
       if (def.slots > 1) {
         if (sheetSelected.includes(cid)) sheetSelected = sheetSelected.filter(x => x !== cid);
         else if (sheetSelected.length < def.slots) sheetSelected.push(cid);
@@ -423,8 +447,8 @@ function renderSheet() {
 
     confirmBtn.onclick = () => {
       const res = assignTask(state, def.id, sheetSelected);
-      if (!res.ok) showToast(res.error);
-      else { closeSheet(); render(); }
+      if (!res.ok) { playSound('denied'); showToast(res.error); }
+      else { playSound('tap'); closeSheet(); render(); }
     };
   } else if (sheetKind === 'mess') {
     const m = state.messTasks.find(x => x.id === sheetTargetId);
@@ -438,8 +462,8 @@ function renderSheet() {
 
     attachCharRowHandlers(row => {
       const res = assignMessTask(state, m.id, row.dataset.char);
-      if (!res.ok) showToast(res.error);
-      else { closeSheet(); render(); }
+      if (!res.ok) { playSound('denied'); showToast(res.error); }
+      else { playSound('tap'); closeSheet(); render(); }
     });
   } else if (sheetKind === 'babysit') {
     el('sheet-title').textContent = '🧸 הצבת שמרטף/ית';
@@ -452,8 +476,8 @@ function renderSheet() {
 
     attachCharRowHandlers(row => {
       const res = assignBabysitter(state, row.dataset.char);
-      if (!res.ok) showToast(res.error);
-      else { closeSheet(); render(); }
+      if (!res.ok) { playSound('denied'); showToast(res.error); }
+      else { playSound('tap'); closeSheet(); render(); }
     });
   }
 }
@@ -464,7 +488,7 @@ function attachCharRowHandlers(handler) {
   });
 }
 
-el('sheet-cancel').addEventListener('click', closeSheet);
+el('sheet-cancel').addEventListener('click', () => { playSound('tap'); closeSheet(); });
 el('sheet-backdrop').addEventListener('click', closeSheet);
 
 // ===== מסכי התחלה/סיום =====

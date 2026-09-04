@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yosovich-shabbat-v4';
+const CACHE_NAME = 'yosovich-shabbat-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './css/style.css',
   './js/data.js',
   './js/engine.js',
+  './js/audio.js',
   './js/ui.js',
   './js/pwa.js',
   './js/main.js',

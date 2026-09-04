@@ -55,6 +55,7 @@ function createInitialState(difficultyId) {
     messTaskCounter: 0,
     jokerCleaner: { lastUsedReal: -Infinity, active: null },
     log: [],
+    soundEvents: [], // אירועים לניגון סאונד - הצרכן (ui.js/main.js) מרוקן ומנגן, ראה playSound ב-audio.js
   };
 }
 
@@ -190,6 +191,7 @@ function completeTask(state, def, t) {
   t.doneCount += 1;
   t.active = null;
   state.log.unshift(`✅ הושלם: ${def.name}`);
+  state.soundEvents.push({ type: isTaskCritical(def, state) ? 'criticalDone' : 'taskDone' });
 }
 
 function completeMessTask(state, m) {
@@ -202,6 +204,7 @@ function completeMessTask(state, m) {
   m.doneCount += 1;
   m.active = null;
   state.messMeter = Math.max(0, state.messMeter - 20);
+  state.soundEvents.push({ type: 'taskDone' });
 }
 
 function updateTaskCompletion(state) {
@@ -241,6 +244,7 @@ function updateMess(state, deltaReal) {
         active: null,
       });
       state.log.unshift('🧸 הילדים עשו בלגן בסלון!');
+      state.soundEvents.push({ type: 'alarm' });
     }
   }
 }
@@ -254,6 +258,7 @@ function updateJoker(state) {
     t.active = null;
     jc.active = null;
     state.log.unshift('🧞 הג\'וקר ניקה את המטבח!');
+    state.soundEvents.push({ type: 'jokerPoof' });
   }
 }
 
@@ -264,6 +269,7 @@ function updateShowers(state) {
       c.showered = true;
       c.showerEnd = null;
       c.currentRoom = null;
+      state.soundEvents.push({ type: 'showerDone' });
     }
   });
 }
@@ -282,6 +288,7 @@ function updateGuestArrivals(state) {
       state.kidsPresentCount += g.family.kids.length;
       state.log.unshift(`👋 ${g.family.name} הגיע/ה עם ${g.family.kids.join(' ו')}!`);
       state.log.unshift(`🛏️ חובה להכין חדר אורחים ${requiredGuestRooms(state)} - אחרת אין שבת!`);
+      state.soundEvents.push({ type: 'guestArrive' });
     }
   });
 }
@@ -343,6 +350,7 @@ function endGame(state) {
   state.ended = true;
   state.started = false;
   state.result = evaluateEnd(state);
+  state.soundEvents.push({ type: state.result.tier });
 }
 
 function tickGame(state, deltaReal) {
