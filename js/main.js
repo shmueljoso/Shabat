@@ -45,6 +45,7 @@ function initApp() {
   initNav();
   initDifficultyPicker();
   initMuteButton();
+  initLeaderboardOverlay();
   wireInstallButtons();
   registerServiceWorker();
 

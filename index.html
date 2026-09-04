@@ -37,6 +37,7 @@
         <li>👍 כל דמות מביאה בונוס מהירות למשימה שהיא הכי טובה בה</li>
       </ul>
       <button id="btn-start" class="btn-primary">התחילו את יום שישי 🚀</button>
+      <button id="btn-leaderboard-open" class="btn-secondary">🏆 טבלת השיאים</button>
       <button id="btn-install" class="btn-secondary" hidden>📲 התקינו את האפליקציה</button>
       <p id="ios-install-hint" class="ios-hint" hidden>באייפון: הקישו על שיתוף 📤 ואז "הוסף למסך הבית"</p>
     </div>
@@ -47,7 +48,28 @@
       <h1 id="end-title"></h1>
       <p id="end-message"></p>
       <div id="end-stats" class="end-stats"></div>
+      <div id="score-submit" class="score-submit">
+        <label for="player-name-input" class="score-submit-label">🏆 שלחו את התוצאה לטבלת השיאים!</label>
+        <div class="score-submit-row">
+          <input id="player-name-input" type="text" maxlength="20" placeholder="השם שלך">
+          <button id="btn-submit-score" class="btn-primary small">שלח/י</button>
+        </div>
+        <p id="score-submit-status" class="score-submit-status"></p>
+      </div>
+      <button id="btn-view-leaderboard" class="btn-secondary" hidden>🏆 צפייה בטבלת השיאים</button>
       <button id="btn-restart" class="btn-primary">שחקו שוב 🔁</button>
+    </div>
+  </div>
+
+  <div id="leaderboard-overlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <h1>🏆 טבלת השיאים</h1>
+      <div class="difficulty-picker" id="leaderboard-diff-picker">
+        <button class="diff-btn active" data-diff="normal">🕐 רגיל</button>
+        <button class="diff-btn" data-diff="early">🔥 שבת מוקדמת</button>
+      </div>
+      <div id="leaderboard-list" class="leaderboard-list"></div>
+      <button id="btn-leaderboard-close" class="btn-secondary">סגירה</button>
     </div>
   </div>
 
@@ -123,6 +145,7 @@
 <script src="./js/data.js"></script>
 <script src="./js/engine.js"></script>
 <script src="./js/audio.js"></script>
+<script src="./js/leaderboard.js"></script>
 <script src="./js/ui.js"></script>
 <script src="./js/pwa.js"></script>
 <script src="./js/main.js"></script>

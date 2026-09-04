@@ -499,14 +499,115 @@ function showEndScreen(result) {
   el('end-message').textContent = result.message;
   el('end-stats').innerHTML = `
     <div class="stat-row"><span>אחוז השלמה כולל</span><b>${result.percent}%</b></div>
+    <div class="stat-row"><span>זמן להישג</span><b>${formatRealTime(result.timeSec)}</b></div>
     <div class="stat-row"><span>מתקלחים</span><b>${result.showeredCount}/${result.totalChars}</b></div>
     <div class="stat-row"><span>חלות</span><b>${result.challahDone ? '✅' : '❌'}</b></div>
     <div class="stat-row"><span>פלטה ושעונים</span><b>${result.hotplateDone ? '✅' : '❌'}</b></div>
     ${result.roomsNeeded > 0 ? `<div class="stat-row"><span>חדרי אורחים</span><b>${result.roomsReady}/${result.roomsNeeded} ${result.guestRoomsOk ? '✅' : '❌'}</b></div>` : ''}
     <div class="stat-row"><span>סיבוב יום שישי</span><b>${result.fridayDone ? '✅' : '❌'}</b></div>
   `;
+  initScoreSubmit(result);
 }
 
 function hideEndScreen() { el('end-overlay').hidden = true; }
 function hideStartScreen() { el('start-overlay').hidden = true; }
 function showStartScreen() { el('start-overlay').hidden = false; }
+
+// ===== שליחת ציון לטבלת השיאים =====
+function initScoreSubmit(result) {
+  const form = el('score-submit');
+  const input = el('player-name-input');
+  const btn = el('btn-submit-score');
+  const status = el('score-submit-status');
+  const viewBtn = el('btn-view-leaderboard');
+
+  form.hidden = false;
+  viewBtn.hidden = true;
+  form.querySelector('.score-submit-row').hidden = false;
+  status.textContent = '';
+  status.className = 'score-submit-status';
+  input.disabled = false;
+  btn.disabled = false;
+  input.value = getSavedPlayerName();
+
+  btn.onclick = async () => {
+    const name = input.value.trim();
+    if (!name) { playSound('denied'); status.textContent = 'נא להזין שם'; status.className = 'score-submit-status error'; return; }
+    btn.disabled = true;
+    input.disabled = true;
+    status.textContent = 'שולח...';
+    status.className = 'score-submit-status';
+    try {
+      const data = await submitScore(name, result.percent, result.timeSec, result.difficulty);
+      playSound('tap');
+      status.textContent = data.rank ? `נשלח! את/ה במקום #${data.rank} 🎉` : 'נשלח בהצלחה! 🎉';
+      status.className = 'score-submit-status ok';
+      form.querySelector('.score-submit-row').hidden = true;
+      viewBtn.hidden = false;
+      viewBtn.onclick = () => openLeaderboard(result.difficulty);
+    } catch (e) {
+      playSound('denied');
+      status.textContent = e.message || 'שליחה נכשלה - בדקו חיבור לרשת ונסו שוב';
+      status.className = 'score-submit-status error';
+      btn.disabled = false;
+      input.disabled = false;
+    }
+  };
+}
+
+// ===== טבלת שיאים (מודאל) =====
+let leaderboardDifficulty = 'normal';
+
+function initLeaderboardOverlay() {
+  el('btn-leaderboard-open').addEventListener('click', () => { playSound('tap'); openLeaderboard(selectedDifficulty); });
+  el('btn-leaderboard-close').addEventListener('click', () => { playSound('tap'); el('leaderboard-overlay').hidden = true; });
+  el('leaderboard-diff-picker').querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      playSound('tap');
+      leaderboardDifficulty = btn.dataset.diff;
+      el('leaderboard-diff-picker').querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b === btn));
+      loadLeaderboardList();
+    });
+  });
+}
+
+function openLeaderboard(difficulty) {
+  leaderboardDifficulty = difficulty === 'early' ? 'early' : 'normal';
+  el('leaderboard-diff-picker').querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.diff === leaderboardDifficulty);
+  });
+  el('leaderboard-overlay').hidden = false;
+  loadLeaderboardList();
+}
+
+async function loadLeaderboardList() {
+  const list = el('leaderboard-list');
+  list.innerHTML = '<p class="sheet-empty">טוען... ⏳</p>';
+  try {
+    const entries = await fetchLeaderboard(leaderboardDifficulty);
+    list.innerHTML = leaderboardListHTML(entries);
+  } catch (e) {
+    list.innerHTML = `<p class="sheet-empty">😔 ${e.message || 'לא ניתן לטעון כרגע'}</p>`;
+  }
+}
+
+const MEDALS = ['🥇', '🥈', '🥉'];
+
+function leaderboardListHTML(entries) {
+  if (!entries || entries.length === 0) {
+    return '<p class="sheet-empty">עדיין אין שיאים ברמה הזו - היו הראשונים! 🚀</p>';
+  }
+  return entries.map((e, i) => `
+    <div class="leaderboard-row ${i < 3 ? 'top3' : ''}">
+      <span class="lb-rank">${MEDALS[i] || '#' + (i + 1)}</span>
+      <span class="lb-name">${escapeHTML(e.name)}</span>
+      <span class="lb-percent">${e.percent}%</span>
+      <span class="lb-time">${formatRealTime(e.timeSec)}</span>
+    </div>`).join('');
+}
+
+function escapeHTML(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}

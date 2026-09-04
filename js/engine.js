@@ -56,6 +56,10 @@ function createInitialState(difficultyId) {
     jokerCleaner: { lastUsedReal: -Infinity, active: null },
     log: [],
     soundEvents: [], // אירועים לניגון סאונד - הצרכן (ui.js/main.js) מרוקן ומנגן, ראה playSound ב-audio.js
+    // האחוז עולה בהדרגה ולעולם לא יורד (doneCount/showered רק מצטברים), אז
+    // "הזמן שלקח להגיע לאחוז הסופי" הוא מדד נקי לשיאים - מתעדכן רק כשהאחוז עולה.
+    bestPercent: 0,
+    bestPercentReal: 0,
   };
 }
 
@@ -308,6 +312,14 @@ function computeProgress(state) {
   return { percent, totalChars, showeredCount };
 }
 
+function updatePercentTimeline(state) {
+  const { percent } = computeProgress(state);
+  if (percent > state.bestPercent) {
+    state.bestPercent = percent;
+    state.bestPercentReal = state.elapsedReal;
+  }
+}
+
 function evaluateEnd(state) {
   const challahDone = state.tasks['bake_challah'].remaining === 0;
   const hotplateDone = state.tasks['hotplate_clocks'].remaining === 0;
@@ -343,7 +355,7 @@ function evaluateEnd(state) {
     message = `הצלחתם להשלים רק ${percent}% מהמשימות, אך משימות הברזל בוצעו. שבת שלום, בקושי!`;
   }
   return { tier, title, message, percent, showeredCount, totalChars, challahDone, hotplateDone, fridayDone,
-           roomsNeeded, roomsReady, guestRoomsOk };
+           roomsNeeded, roomsReady, guestRoomsOk, difficulty: state.difficulty, timeSec: state.bestPercentReal };
 }
 
 function endGame(state) {
@@ -368,6 +380,7 @@ function tickGame(state, deltaReal) {
   updateMess(state, deltaReal);
   updateJoker(state);
   updateShowers(state);
+  updatePercentTimeline(state);
 
   if (state.elapsedReal >= state.realDurationSec) endGame(state);
 }
